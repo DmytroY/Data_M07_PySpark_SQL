@@ -8,10 +8,13 @@ spark = SparkSession.builder.appName("trying_delta")\
   .config("spark.sql.catalog.spark_catalog", "org.apache.spark.sql.delta.catalog.DeltaCatalog")\
   .getOrCreate()
 
-# print(os.getcwd())
+print("=============== Curent directory: ")
+print(os.getcwd())
 
 with open("notebooks/select.sql") as sql_file:
   query = sql_file.read()
+
+print(" ========= SQL query:", query)
 
 result = spark.sql(query)
 result.show()

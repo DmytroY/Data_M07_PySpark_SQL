@@ -19,3 +19,5 @@ do_not_share.md
 data/
 .terraform*
 terraform/terraform.plan
+.databricks/
+.vscode/
