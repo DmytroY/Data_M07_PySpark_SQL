@@ -21,3 +21,5 @@ data/
 terraform/terraform.plan
 .databricks/
 .vscode/
+.ipynb*
+

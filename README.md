@@ -2,7 +2,8 @@
 # Spark ETL on Databricks
 ## Prerequisites
 Installed latest:   
-- Azure CLI, 
+- Azure CLI,
+- databricks CLI,
 - terraform,  
 - spark installed to /opt/spark/
 
@@ -39,11 +40,24 @@ pyspark \
 ```
 where:   
 **acc** - storage account name,   
-**key** - storage account key.  
+**key** - storage account access key.  
 
 You can access the data by such path:  
 ```
 data_path = f"abfs://{container}>@{account}.dfs.core.windows.net"
+```
+
+## Databricks connect to Azure storage
+We will use databricks secrets to store Azure storage account access key.
+Create secret scope 
+`> databricks secrets create-scope <scope-name> --initial-manage-principal users`
+
+add secret
+`> databricks secrets put-secret <scope-name> <key-name> --string-value <secret>`
+
+Now you can refer to secret in notebook as
+`dbutils.secrets.get(<scope-name>, <key-name>)`
+
 
 
 ======= original readme ========
