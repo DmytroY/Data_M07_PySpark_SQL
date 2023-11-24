@@ -1,6 +1,6 @@
 
 # Spark ETL on Databricks
-## Prerequisites
+## 1. Prerequisites
 Installed latest:   
 - Azure CLI,
 - databricks CLI,
@@ -12,7 +12,7 @@ Login to Azure:
 az login
 ```
 
-## Terraform   
+## 2. Terraform   
 Create Azure Resource Group and Storage Account, get Storage Account key:
 ```
 az group create --name tf-state-rg \
@@ -31,7 +31,7 @@ az storage container create --account-name sa451 \
   --public-access off \
   --account-key <account-key>
 ```
-## Data
+## 3. Data
 Put your data to the Azure storage account blob container. Now it can be accessible from pyspark console. Just start pyspark this way:
 ```
 pyspark \
@@ -46,8 +46,29 @@ You can access the data by such path:
 ```
 data_path = f"abfs://{container}>@{account}.dfs.core.windows.net"
 ```
+## 4. Local development
+To avoid cost spending we can develope notebooks localy in Jupyter notebook. For this we should install Jupyter and use it as spark python driver:
+```
+pip install jupyter
+export PYSPARK_PYTHON=/usr/bin/python3
+export PYSPARK_DRIVER_PYTHON='jupyter'
+export PYSPARK_DRIVER_PYTHON_OPTS='notebook --port=8889'
+```
+Now if we run pyspark as described in chater **3.Data** we start pyspark not in console but in Jupyter 
 
-## Databricks connect to Azure storage
+![pyspark in jupyter](screenshots/01-pyspark_in_jupyter.jpg)
+
+so we can efectively develop notebooks localy.  
+SQL sintaxis also alailable in Jupyter. Fo this install sparksql-magic:
+```
+pip install sparksql-magic
+```
+then run it in notebook by `%load_ext sparksql_magic` command, so now `%%sparksql` magic comand is available
+
+![SQL magic in Jupyter](screenshots/02-SQL_magic1.jpg)
+
+
+## 5. Databricks connect to Azure storage
 We will use databricks secrets to store Azure storage account access key.
 Create secret scope 
 `> databricks secrets create-scope <scope-name> --initial-manage-principal users`
@@ -58,18 +79,33 @@ add secret
 Now you can refer to secret in notebook as
 `dbutils.secrets.get(<scope-name>, <key-name>)`
 
+## 6. Run om Databricks
+On this stage we have:
+- properly set databrics secrets to connect Azure storage
+- incoming data in the Azure storage
+- developed notebooks with code localy
 
+Next our steps are:
+- import notebooks to Databricks workspase
 
-======= original readme ========
-* Add your code in `src/main/` if needed
-* Test your code with `src/tests/` if needed
-* Modify notebooks for your needs
-* Deploy infrastructure with terraform
-```
-terraform init
-terraform plan -out terraform.plan
-terraform apply terraform.plan
-....
-terraform destroy
-```
-* Launch notebooks on Databricks cluster
+![db workspace](screenshots/03-DB-workspace.jpg)
+
+- create and run compute cluster
+
+![db cluster](screenshots/04-db_cluster.jpg)
+
+- uncoment in 00_setup notebook chunck of code needed for using databricks secrets and connect to Azure storage
+
+![connect to AZ storage](screenshots/05-db_storage_connect.jpg)
+
+- run notebooks performing ETLs
+
+![run notebooks](screenshots/06-db_run_notebooks.jpg)
+
+- analize execution plans
+
+![execution plan](screenshots/08-exec_plan.jpg)
+
+- check output data in Azure storage
+
+![output data](screenshots/07-output_data_Azure.jpg)
