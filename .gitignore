@@ -14,3 +14,13 @@ dist/
 build/
 ### Mac ###
 .DS_Store
+do_not_share.md
+*metastore_db*
+data/
+.terraform*
+terraform/terraform.plan
+.databricks/
+.vscode/
+.ipynb*
+jupspark.sh
+.gitignore
